@@ -13,25 +13,22 @@ public class CoffeeOrderBoard {
     private final List<Order> orders = new LinkedList<>();
     private int lastOrderNumber = 0;
 
-    public Order add(String customerName) {
+    public void add(String customerName) {
         lastOrderNumber++;
         Order order = new Order(lastOrderNumber, customerName);
         orders.add(order);
         log.info("Added order #{} for {}", order.getNumber(), customerName);
-        return order;
     }
 
-    public Order deliver() {
+    public void deliver() {
         if (orders.isEmpty()) {
             log.warn("No orders to deliver");
-            return null;
         }
-        Order next = orders.remove(0);
+        Order next = orders.removeFirst();
         log.info("Delivered next order: #{} for {}", next.getNumber(), next.getCustomerName());
-        return next;
     }
 
-    public Order deliver(int orderNumber) {
+    public Optional<Order> deliver(int orderNumber) {
         Optional<Order> found = orders.stream()
                 .filter(o -> o.getNumber() == orderNumber)
                 .findFirst();
@@ -42,7 +39,7 @@ public class CoffeeOrderBoard {
         Order order = found.get();
         orders.remove(order);
         log.info("Delivered order #{} for {} (ready before time)", order.getNumber(), order.getCustomerName());
-        return order;
+        return Optional.of(order);
     }
 
     public void draw() {
